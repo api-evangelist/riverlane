@@ -1,23 +1,133 @@
 aid: riverlane
 name: Riverlane
-description: 'Riverlane is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Riverlane is a Cambridge (UK) quantum computing company building the quantum error correction (QEC)
+  stack. Its two product lines are Deltaflow — a real-time QEC system covering qubit data readout,
+  decoding, logical operations and orchestration, running error correction on up to 250 physical
+  qubits with the proprietary Local Clustering Decoder — and Deltakit, an Apache-2.0 open-source
+  Python SDK for designing, generating, simulating, decoding and analysing QEC experiments. The
+  public developer surface is the Deltakit cloud service at https://deltakit.riverlane.com/proxy,
+  a bearer-token API with two coexisting versions: a GraphQL endpoint (/api/graphql, API v1) and an
+  asynchronous task REST API (/api/v2/tasks/add|get|kill, API v2). Both front Riverlane's proprietary
+  decoders (Ambiguity Clustering, Local Clustering, Collision Clustering), leakage-aware decoding and
+  simulation, iSWAP native-gate circuit generation, and stability-experiment generation. Riverlane
+  publishes no OpenAPI or AsyncAPI document; the machine-readable contract is the open-source client
+  library at github.com/Deltakit/deltakit, which is where every endpoint recorded in this profile
+  was read from.
+image: https://avatars.githubusercontent.com/u/41478377?v=4
 url: https://raw.githubusercontent.com/api-evangelist/riverlane/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-05'
 modified: '2026-08-05'
 tags:
-- Company
-apis: []
+- quantum-computing
+- quantum-error-correction
+- decoders
+- scientific-computing
+- python-sdk
+- graphql
+- simulation
+- research-tools
+- open-source
+- hpc
+apis:
+- name: Deltakit Cloud API
+  description: >-
+    Bearer-token cloud service backing the Deltakit SDK. Exposes the compute-heavy and proprietary
+    parts of the QEC workflow that do not run locally: leakage noise generation and simulation,
+    decoding with the Ambiguity Clustering (AC), Local Clustering (LCD) and Collision Clustering (CC)
+    decoders, leakage-aware decoding, iSWAP native-gate circuit generation, quantum stability
+    experiment generation, defect-rate and correlation-matrix analysis, and circuit/detector trimming.
+    Two API versions share the same base URL and token: v1 is GraphQL (POST /api/graphql with query
+    documents served from /api/data/query/<name>), v2 is an asynchronous REST task API (POST
+    /api/v2/tasks/add/<task>, GET /api/v2/tasks/get/?request_id=, DELETE /api/v2/tasks/kill/).
+  humanURL: https://deltakit.readthedocs.io/
+  baseURL: https://deltakit.riverlane.com/proxy
+  tags:
+  - quantum-computing
+  - quantum-error-correction
+  - decoders
+  - graphql
+  - simulation
+  properties:
+  - type: Documentation
+    url: https://deltakit.readthedocs.io/
+  - type: APIReference
+    url: https://github.com/Deltakit/deltakit/blob/main/docs/api.rst
+  - type: GraphQL
+    url: https://deltakit.riverlane.com/proxy/api/graphql
+  - type: SourceCode
+    url: https://github.com/Deltakit/deltakit/tree/main/deltakit-explorer/src/deltakit_explorer/_api
+  - type: Authentication
+    url: authentication/riverlane-authentication.yml
+  - type: Conventions
+    url: conventions/riverlane-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riverlane-error-codes.yml
+  - type: DataModel
+    url: data-model/riverlane-data-model.yml
+common:
+- type: Website
+  url: https://www.riverlane.com/
+- type: DeveloperPortal
+  url: https://deltakit.riverlane.com/
+- type: Documentation
+  url: https://deltakit.readthedocs.io/
+- type: APIReference
+  url: https://github.com/Deltakit/deltakit/blob/main/docs/api.rst
+- type: GettingStarted
+  url: https://github.com/Deltakit/deltakit/blob/main/docs/guide/getting_started.md
+- type: Support
+  url: https://github.com/Deltakit/deltakit/discussions
+- type: Blog
+  url: https://www.riverlane.com/blog
+- type: GitHubOrganization
+  url: https://github.com/Deltakit
+- type: SignUp
+  url: https://deltakit.riverlane.com/dashboard/token
+- type: PrivacyPolicy
+  url: https://www.riverlane.com/privacy-policy
+- type: SourceCode
+  url: https://github.com/Deltakit/deltakit
+- type: ChangeLog
+  url: changelog/riverlane-changelog.yml
+- type: Packages
+  url: packages/riverlane-packages.yml
+- type: SDKs
+  url: packages/riverlane-packages.yml
+- type: Authentication
+  url: authentication/riverlane-authentication.yml
+- type: Conventions
+  url: conventions/riverlane-conventions.yml
+- type: ErrorCatalog
+  url: errors/riverlane-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/riverlane-lifecycle.yml
+- type: Conformance
+  url: conformance/riverlane-conformance.yml
+- type: DataModel
+  url: data-model/riverlane-data-model.yml
+- type: Components
+  url: components/riverlane-components.yml
+- type: LLMsTxt
+  url: llms/riverlane-llms.txt
+- type: VulnerabilityDisclosure
+  url: security/riverlane-vulnerability-disclosure.yml
+- type: Security
+  url: https://github.com/Deltakit/deltakit/blob/main/docs/SECURITY.md
+- type: DomainSecurity
+  url: security/riverlane-domain-security.yml
+- type: SecondaryMarketListing
+  url: https://www.hiive.com/securities/riverlane-stock
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
-common:
-- type: Website
-  url: https://www.hiive.com/securities/riverlane-stock
+x-enrichment:
+  date: '2026-08-05'
+  status: enriched
+  artifacts_added: 13
+  pass: local-v1

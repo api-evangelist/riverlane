@@ -1,0 +1,33 @@
+generated: '2026-08-05'
+method: probed
+source: live HTTP probe
+notes: >-
+  Nothing was found. Every /.well-known/ path was probed on all three Riverlane hosts and none
+  returned a document. On deltakit.riverlane.com the responses are HTTP 404 with a Next.js HTML
+  body (soft-404 shape — recorded as a miss, never as a hit). On www.riverlane.com the
+  /.well-known/* paths return a genuine 404. No pointer of type WellKnown, APICatalog or
+  SecurityTxt is wired into apis.yml, because no such document exists to point at.
+  Riverlane's vulnerability-disclosure route is instead GitHub private reporting — see
+  security/riverlane-vulnerability-disclosure.yml.
+hosts:
+- host: https://deltakit.riverlane.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/openid-configuration, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/oauth-authorization-server, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/oauth-protected-resource, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/api-catalog, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/agent-card.json, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/agent.json, status: 404, content_type: 'text/html; charset=utf-8'}
+- host: https://www.riverlane.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /robots.txt, status: 200, note: 'User-agent: * / Disallow: /cdn-cgi/ / Allow: / — sitemap declared'}
+- host: https://deltakit-docs.riverlane.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/agent-card.json, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /.well-known/agent.json, status: 404, content_type: 'text/html; charset=utf-8'}
+  - {path: /robots.txt, status: 200, content_type: text/plain}

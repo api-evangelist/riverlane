@@ -1,0 +1,52 @@
+generated: '2026-08-05'
+method: searched
+source: https://github.com/Deltakit
+notes: >-
+  Riverlane ships no embedded/hosted UI surface for its API (no embedded dashboard, no
+  drop-in web components, no hosted checkout-style pages). What it does publish are two
+  first-party client-side visualisation libraries for QEC circuits, distributed from the
+  Deltakit GitHub organisation. Neither is on npm — patoka-circuit-js is consumed from source.
+  Recorded as components rather than SDKs because both render UI rather than call the API.
+families:
+- name: Circuit visualisation
+  components:
+  - name: patoka-circuit-js
+    kind: javascript-library
+    description: Patoka's circuit visualisation for pure JavaScript — renders QEC circuits in the browser
+    repo: https://github.com/Deltakit/patoka-circuit-js
+    license: MIT
+    registry: null
+    registry_note: not published to npm (registry.npmjs.org/patoka-circuit-js returns 404)
+    official: true
+  - name: crumpy
+    kind: jupyter-widget
+    description: Python library for visualising a Crumble circuit inside a Jupyter notebook
+    repo: https://github.com/Deltakit/crumpy
+    docs: http://deltakit.github.io/crumpy
+    registry: pypi
+    package: crumpy
+    version: 0.2.0
+    license: Apache-2.0
+    official: true
+- name: In-SDK rendering
+  components:
+  - name: draw_patch / detection-probability patch rendering
+    kind: python-plotting
+    description: >-
+      Code and analysis objects render themselves (code.draw_patch(), detection probability on the
+      patch, logical-error and Lambda plots) via matplotlib inside notebooks
+    package: deltakit-explorer
+    docs: https://github.com/Deltakit/deltakit/blob/main/docs/guide/getting_started.md
+    official: true
+embedded_dashboards: []
+hosted_surfaces:
+- name: Deltakit dashboard
+  url: https://deltakit.riverlane.com/dashboard/token
+  kind: hosted-console
+  embeddable: false
+  note: Account console where the cloud access token is generated; requires login, not embeddable
+- name: Deltakit Textbook
+  url: https://textbook.riverlane.com
+  repo: https://github.com/Deltakit/deltakit-textbook
+  kind: interactive-learning
+  embeddable: false

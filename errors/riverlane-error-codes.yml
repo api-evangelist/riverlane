@@ -1,0 +1,96 @@
+generated: '2026-08-05'
+method: searched
+source: https://github.com/Deltakit/deltakit/blob/main/docs/guide/authentication.md
+also_from:
+- https://github.com/Deltakit/deltakit/blob/main/deltakit-explorer/src/deltakit_explorer/_api/_gql_client.py
+- https://github.com/Deltakit/deltakit/blob/main/deltakit-explorer/src/deltakit_explorer/_api/_api_v2_client.py
+- live 401 responses observed on the Deltakit Cloud API
+format: custom-json
+problem_json: false
+notes: >-
+  The Deltakit Cloud API does not use RFC 9457 problem+json. The gateway returns
+  {"message": "...", "error_code": <int>}; the application behind it may instead return
+  {"detail": "..."}. The client normalises both into the string
+  "Status <http_status> (Error #<error_code>): <message>" and raises ServerException.
+  Riverlane publishes no complete error-code registry — the entries below are the ones its own
+  documentation and client library name, plus codes observed on live anonymous probes. Codes
+  Riverlane has not published are NOT listed here.
+envelope:
+  gateway: {message: string, error_code: integer}
+  application: {detail: string}
+  client_exception: deltakit.explorer.types.ServerException
+  client_format: 'Status {http_status} (Error #{error_code}): {message}'
+  truncation: client truncates messages over 160 characters
+error_codes:
+- code: 6000
+  class: authentication
+  http_status: 401
+  observed: true
+  messages:
+  - message: No authorisation credentials provided
+    cause: No Authorization header sent
+    remediation: >-
+      Set an Authorization: Bearer <token> header, or Client.set_token(...) / DELTAKIT_TOKEN in the SDK
+    evidence: {url: 'https://deltakit.riverlane.com/proxy/api/graphql', status: 401}
+  - message: 'Invalid token header. Secret key should be a 32-character string.'
+    cause: Token is malformed — a character was added or dropped
+    remediation: Re-copy the full token from the token dashboard and re-register it
+    source: docs/guide/authentication.md
+  - message: 'Invalid token header. No credentials provided.'
+    cause: Authorization header present but empty
+    remediation: Send the token value after the Bearer prefix
+    source: docs/guide/authentication.md
+  - message: Invalid token received.
+    cause: Token was regenerated; the old token is now invalid
+    remediation: Use only the most recently generated token
+    source: docs/guide/authentication.md
+http_statuses:
+- status: 401
+  meaning: Token missing, malformed or superseded
+  error_code: 6000
+  observed: true
+- status: 404
+  meaning: >-
+    Two distinct cases. On an unknown path the gateway returns
+    {"message": "Requested resource not found", "error_code": 6000}. On GET /api/v2/tasks/get/ a 404
+    means the request_id is unknown — the client raises KeyError("Request <id> not found"),
+    not ServerException.
+  observed: true
+  evidence: {url: 'https://deltakit.riverlane.com/proxy/openapi.json', status: 404}
+- status: 500
+  meaning: Server error — retried by the client (3 attempts, 0.5 backoff factor)
+  observed: false
+- status: 502
+  meaning: Bad gateway — retried by the client
+  observed: false
+- status: 503
+  meaning: 'Service unavailable — client substitutes the message "Service unavailable" when the body is empty'
+  observed: false
+  source: _gql_client.py _get_message()
+- status: 504
+  meaning: Gateway timeout — retried by the client
+  observed: false
+known_conditions:
+- condition: 'no healthy upstream'
+  http_status: null
+  cause: Transient upstream unavailability behind the gateway
+  remediation: Retry; the docs call this out as an occasional condition even with a valid token
+  source: docs/guide/authentication.md
+- condition: token-not-set
+  cause: No DELTAKIT_TOKEN in environment or on disk
+  raised_as: 'RuntimeError (client-side, before any request is sent)'
+  remediation: 'Obtain a token at https://deltakit.riverlane.com/dashboard/token and call Client.set_token'
+job_failure_model:
+  detail: >-
+    v2 work is asynchronous, so failures also surface as a terminal job state rather than an HTTP
+    status. A polled Job carries status, request_id, type, error, workload and result; a non-null
+    `error` is raised as ServerException by Job.raise_on_error().
+  statuses: [SUBMITTED, IN_PROGRESS, SUCCESS, FAILED, CANCELLED]
+  cancellation: >-
+    A cancelled job raises InterruptedError client-side, reporting the worker count returned by
+    DELETE /api/v2/tasks/kill/.
+gaps:
+- >-
+  Riverlane publishes no consolidated error-code reference page. Only the 6000 authentication class
+  is documented; the numbering scheme above it is not public.
+- No problem+json / RFC 9457 media type, and no machine-readable error type URIs.

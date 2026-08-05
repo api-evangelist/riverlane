@@ -1,0 +1,97 @@
+generated: '2026-08-05'
+method: searched
+source: https://pypi.org/project/deltakit/
+notes: >-
+  Riverlane ships one first-party client family, published to PyPI under the Deltakit name and
+  developed in the open at github.com/Deltakit. `deltakit` is the meta-package; the rest are
+  component packages. Only `deltakit-explorer` talks to the Deltakit Cloud API — the others are
+  local compute. npm, Maven Central, NuGet, pkg.go.dev, RubyGems, Packagist and crates.io were
+  probed and carry no first-party Riverlane/Deltakit package (npm names `deltakit`,
+  `@deltakit/circuit`, `patoka-circuit-js` all 404).
+packages:
+- language: python
+  registry: pypi
+  name: deltakit
+  version: 0.9.0
+  url: https://pypi.org/project/deltakit/
+  install: pip install deltakit
+  official: true
+  license: Apache-2.0
+  role: meta-package; installs deltakit-circuit, deltakit-core, deltakit-decode, deltakit-explorer
+  python_requires: '>=3.10,<3.15'
+- language: python
+  registry: pypi
+  name: deltakit-explorer
+  version: 0.9.0
+  url: https://pypi.org/project/deltakit-explorer/
+  install: pip install deltakit-explorer
+  official: true
+  license: Apache-2.0
+  role: >-
+    QEC experiment orchestration, codes, QPU/noise models, analysis — and the cloud API client
+    (GraphQL v1 + REST v2) that authenticates with DELTAKIT_TOKEN
+- language: python
+  registry: pypi
+  name: deltakit-core
+  version: 0.9.1
+  url: https://pypi.org/project/deltakit-core/
+  install: pip install deltakit-core
+  official: true
+  license: Apache-2.0
+  role: shared core types and decoding graph primitives
+- language: python
+  registry: pypi
+  name: deltakit-circuit
+  version: 0.9.1
+  url: https://pypi.org/project/deltakit-circuit/
+  install: pip install deltakit-circuit
+  official: true
+  license: Apache-2.0
+  role: circuit construction, gates, noise channels, Stim interop
+- language: python
+  registry: pypi
+  name: deltakit-decode
+  version: 0.9.1
+  url: https://pypi.org/project/deltakit-decode/
+  install: pip install deltakit-decode
+  official: true
+  license: Apache-2.0
+  role: open-source decoders (e.g. MWPM) and decoding analysis
+- language: python
+  registry: pypi
+  name: deltakit-compile
+  version: 0.9.1
+  url: https://pypi.org/project/deltakit-compile/
+  install: pip install deltakit-compile
+  official: true
+  license: Apache-2.0
+  role: compilation of QEC circuits to hardware-native gate sets
+- language: python
+  registry: pypi
+  name: deltakit-stim
+  version: 0.2.2
+  url: https://pypi.org/project/deltakit-stim/
+  install: pip install deltakit-stim
+  official: true
+  license: Apache-2.0
+  role: Stim extension adding non-computational (leakage) error support
+  source: https://github.com/Deltakit/deltakit-stim
+- language: python
+  registry: pypi
+  name: crumpy
+  version: 0.2.0
+  url: https://pypi.org/project/crumpy/
+  install: pip install crumpy
+  official: true
+  license: Apache-2.0
+  role: Jupyter notebook visualisation of Crumble circuits
+  source: https://github.com/Deltakit/crumpy
+registries_probed:
+- {registry: pypi, result: 8 first-party packages}
+- {registry: npm, result: 'none (deltakit 404, @deltakit/circuit 404, patoka-circuit-js 404)'}
+- {registry: maven-central, result: none}
+- {registry: nuget, result: none}
+- {registry: pkg.go.dev, result: none}
+- {registry: rubygems, result: none}
+- {registry: packagist, result: none}
+- {registry: crates.io, result: none}

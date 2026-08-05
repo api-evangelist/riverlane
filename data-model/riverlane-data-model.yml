@@ -1,0 +1,115 @@
+generated: '2026-08-05'
+method: derived
+source: https://github.com/Deltakit/deltakit/tree/main/deltakit-explorer/src/deltakit_explorer
+notes: >-
+  Riverlane publishes no OpenAPI, so this entity graph is derived from the published, typed client
+  library — the dataclasses and enums in deltakit_explorer.types and deltakit_explorer.enums that
+  define the request and response payloads of the Deltakit Cloud API. Every entity and enum value
+  below appears verbatim in that source. Field lists are partial where the class is large; nothing
+  is invented.
+domain: quantum error correction experiments
+entities:
+- name: Job
+  description: Asynchronous unit of work returned by the v2 task API
+  identifier: request_id
+  fields: [status, request_id, type, error, workload, result]
+  enums:
+    status: [SUBMITTED, IN_PROGRESS, SUCCESS, FAILED, CANCELLED]
+    type: APIEndpoints
+  source: deltakit-explorer/src/deltakit_explorer/_api/_api_v2_client.py
+- name: APIEndpoints
+  kind: enum
+  description: The nine server-side task types the cloud API accepts
+  values:
+  - generate_circuit
+  - generate_noisy_stim_circuit
+  - generate_si1000_noisy_stim_circuit
+  - decode
+  - decode_leakage
+  - defect_rates
+  - correlation_matrix
+  - trim_circuit_and_detectors
+  - simulation
+  source: deltakit-explorer/src/deltakit_explorer/enums/_api_enums.py
+- name: QECExperimentDefinition
+  description: Input to circuit generation — pairs a code with an experiment type and parameters
+  relationships:
+  - {type: has_one, target: CircuitParameters, via: parameters}
+  - {type: has_one, target: QECECodeType, via: code_type}
+  - {type: has_one, target: QECExperimentType, via: experiment_type}
+- name: QECExperimentType
+  kind: enum
+  values: [QUANTUM_MEMORY, STABILITY]
+- name: QECECodeType
+  kind: enum
+  values: [ROTATED_PLANAR, UNROTATED_PLANAR, REPETITION, BIVARIATE_BICYCLE, UNROTATED_TORIC]
+- name: CircuitParameters
+  fields: [matrix_specifications, sizes]
+  relationships:
+  - {type: has_one, target: MatrixSpecifications, via: matrix_specifications}
+  - {type: has_one, target: Sizes, via: sizes}
+- name: MatrixSpecifications
+  description: Bivariate-bicycle code matrix definition
+  fields: [param_l, param_m]
+- name: Sizes
+  fields: [sizes]
+- name: TypedData
+  kind: abstract
+  description: Binary payload carrier with a declared wire format and width
+  fields: [data_format, content, data_width]
+  subtypes: [RAMData, TypedDataFile, TypedDataString]
+  relationships:
+  - {type: has_one, target: DataFormat, via: data_format}
+- name: DataFormat
+  kind: enum
+  values: ['01', b8, csv, text]
+- name: BinaryDataType
+  kind: abstract
+  fields: [data]
+  subtypes: [Measurements, DetectionEvents, ObservableFlips, LeakageFlags]
+  relationships:
+  - {type: has_one, target: TypedData, via: data}
+- name: Measurements
+  description: Raw stabiliser measurement shots from a QPU or simulator
+- name: DetectionEvents
+  description: Detector outcomes derived from measurements; the decoder input
+- name: ObservableFlips
+  description: Logical observable outcomes; the decoder ground truth
+- name: LeakageFlags
+  description: Per-shot leakage indicators, used by leakage-aware decoding
+- name: NoiseModel
+  kind: abstract
+  subtypes: [PhysicalNoiseModel, SI1000NoiseModel]
+  note: each subtype carries the ENDPOINT it is submitted to
+- name: PhysicalNoiseModel
+  description: Per-QPU physical error rates and gate timings
+  fields: [time_measurement, time_reset, p_reset_error, p_meas_qubit_error, p_readout_flip]
+- name: SI1000NoiseModel
+  description: Superconducting-inspired SI1000 noise model
+  fields: [p, p_l]
+- name: Decoder
+  fields: [decoder_type, use_experimental_graph, parallel_jobs, parameters]
+  relationships:
+  - {type: has_one, target: DecoderType, via: decoder_type}
+- name: DecoderType
+  kind: enum
+  values: [MWPM, CC, BELIEF_MATCHING, BP_OSD, AC, LCD]
+  note: >-
+    MWPM and BELIEF_MATCHING/BP_OSD run locally; AC, LCD and CC are Riverlane proprietary decoders
+    reachable only through the cloud API
+- name: DecodingResult
+  description: Decoder output and derived logical-error statistics
+- name: QubitCoordinateToDetectorMapping
+  fields: [detector_map]
+  description: Maps qubit coordinates to detector indices; returned alongside correlation matrices
+relationships_summary:
+- {from: Job, to: APIEndpoints, type: has_one, via: type}
+- {from: QECExperimentDefinition, to: CircuitParameters, type: has_one, via: parameters}
+- {from: Decoder, to: DecodingResult, type: produces}
+- {from: DetectionEvents, to: DecodingResult, type: input_to}
+- {from: NoiseModel, to: APIEndpoints, type: has_one, via: ENDPOINT}
+gaps:
+- >-
+  Field lists for PhysicalNoiseModel, DecodingResult and the code classes are partial. A complete
+  ERD would require an OpenAPI or GraphQL SDL, neither of which Riverlane publishes anonymously —
+  GraphQL introspection at /proxy/api/graphql returns 401.

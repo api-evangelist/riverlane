@@ -1,0 +1,59 @@
+generated: '2026-08-05'
+method: searched
+source: https://github.com/Deltakit/deltakit/blob/main/CHANGELOG.md
+releases: https://github.com/Deltakit/deltakit/releases
+scheme: semver
+tooling: python-semantic-release (conventional-commit derived, machine-generated changelog)
+current_version: 0.9.0
+current_date: '2026-07-09'
+scope: >-
+  The changelog covers the Deltakit SDK (the meta-package and its component packages), not the
+  Deltakit Cloud API. Riverlane publishes no separate API changelog — a cloud-side change is only
+  visible when it lands in a client release. Recent window only; the live changelog is the source
+  of truth.
+entries:
+- version: 0.9.0
+  date: '2026-07-09'
+  breaking: false
+  highlights:
+  - 'analysis: asymmetric error bars, and the uncertainties package used for error propagation'
+  - 'analysis: generic plot refactored to dispatch to specialised plotters'
+  - 'explorer: c-optimal discretisation strategy to reduce gradient variance in error budgeting'
+  - Detection probability visualised on the patch
+  - Even distances allowed for lambda
+  - 'circuit: correct TICK placement with REPEAT; tag propagation in deltakit stim'
+  - 'dependencies: deltakit-stim >= 0.2; gql[requests] widened to >=3.5,<5.0'
+- version: 0.8.0
+  date: '2026-03-10'
+  breaking: null
+- version: 0.7.1
+  date: '2026-02-10'
+  breaking: null
+- version: 0.7.0
+  date: '2026-02-10'
+  breaking: null
+- version: 0.6.2
+  date: '2026-01-30'
+  breaking: null
+- version: 0.6.1
+  date: '2026-01-29'
+  breaking: null
+- version: 0.6.0
+  date: '2026-01-15'
+  breaking: null
+- version: 0.5.1
+  date: '2026-01-15'
+  breaking: null
+- version: 0.5.0
+  date: '2025-09-16'
+  breaking: null
+  note: First public release, alongside the Deltakit launch announcement.
+component_changelogs:
+- {package: deltakit-stim, repo: https://github.com/Deltakit/deltakit-stim}
+- {package: crumpy, repo: https://github.com/Deltakit/crumpy}
+gaps:
+- >-
+  Entries for 0.5.0 through 0.8.0 are recorded as version + date only; per-release highlights were
+  not transcribed. Breaking-change flags are null rather than false where not verified — the
+  package is pre-1.0 and declared alpha, so breaking changes between minors are permitted.
+- No changelog exists for the cloud API surface itself.

@@ -1,0 +1,68 @@
+generated: '2026-08-05'
+method: searched
+source: https://github.com/Deltakit/deltakit/blob/main/docs/guide/authentication.md
+docs: https://github.com/Deltakit/deltakit/blob/main/docs/guide/authentication.md
+notes: >-
+  Derived by reading Riverlane's own published authentication guide and the open-source client
+  (deltakit-explorer/_api/_auth.py, _api_v2_client.py, _gql_client.py). Riverlane publishes no
+  OpenAPI, so there are no securitySchemes to parse; this profile is the documented contract.
+  There is no OAuth 2.0 / OIDC surface — /.well-known/openid-configuration,
+  /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource all 404, so
+  no scopes/ artifact is emitted.
+summary:
+  types: [http]
+  http_schemes: [bearer]
+  api_key_in: [header]
+  oauth2_flows: []
+  openid_connect: false
+  mtls: false
+schemes:
+- name: DeltakitToken
+  type: http
+  scheme: bearer
+  in: header
+  header: Authorization
+  format: 'Bearer <token>'
+  description: >-
+    A single opaque account token. The docs state the secret is a 32-character string; a malformed
+    token returns "Invalid token header. Secret key should be a 32-character string." Tokens are
+    long-lived but regenerable — regenerating invalidates the previous token immediately.
+  applies_to:
+  - https://deltakit.riverlane.com/proxy/api/graphql
+  - https://deltakit.riverlane.com/proxy/api/data/query/{name}
+  - https://deltakit.riverlane.com/proxy/api/v2/tasks/add/{task}
+  - https://deltakit.riverlane.com/proxy/api/v2/tasks/get/
+  - https://deltakit.riverlane.com/proxy/api/v2/tasks/kill/
+  sources:
+  - https://github.com/Deltakit/deltakit/blob/main/deltakit-explorer/src/deltakit_explorer/_api/_auth.py
+  - https://github.com/Deltakit/deltakit/blob/main/deltakit-explorer/src/deltakit_explorer/_api/_api_v2_client.py
+provisioning:
+  self_serve: true
+  cost: free
+  token_page: https://deltakit.riverlane.com/dashboard/token
+  requires_account: true
+  note: >-
+    Riverlane's launch material describes the access token as free. The token page itself requires
+    a Deltakit account login and could not be read anonymously.
+client_handling:
+  env_var: DELTAKIT_TOKEN
+  persisted_file: true
+  persisted_note: Client.set_token() writes the token to a local .env-style config file by default
+  set_token_validates: true
+  validation_call: >-
+    GET /api/v2/tasks/get/ with an empty request_id (v2) or a content-endpoint probe (v1); a 401
+    with error_code 6000 means the token is bad
+  tls_verification_toggle: DELTAKIT_DISABLE_TLS_CHECK (debug only; disables certificate validation)
+anonymous_access:
+  supported: false
+  evidence:
+  - {url: 'https://deltakit.riverlane.com/proxy/api/graphql', status: 401, body: '{"message":"No authorisation credentials provided","error_code":6000}'}
+  - {url: 'https://deltakit.riverlane.com/proxy/api/v2/tasks/get/', status: 401, body: '{"message":"No authorisation credentials provided","error_code":6000}'}
+  - {url: 'https://deltakit.riverlane.com/proxy/api/data/query/decode', status: 401, body: '{"message":"No authorisation credentials provided","error_code":6000}'}
+x-evidence:
+  fetched: '2026-08-05'
+  probes:
+  - {url: 'https://deltakit.riverlane.com/proxy/api/graphql', method: POST, status: 401, content_type: application/json}
+  - {url: 'https://deltakit.riverlane.com/.well-known/openid-configuration', status: 404}
+  - {url: 'https://deltakit.riverlane.com/.well-known/oauth-authorization-server', status: 404}
+  - {url: 'https://deltakit.riverlane.com/.well-known/oauth-protected-resource', status: 404}

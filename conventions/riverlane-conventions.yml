@@ -1,0 +1,93 @@
+generated: '2026-08-05'
+method: derived
+source: https://github.com/Deltakit/deltakit/tree/main/deltakit-explorer/src/deltakit_explorer/_api
+docs: https://github.com/Deltakit/deltakit/blob/main/docs/guide/authentication.md
+notes: >-
+  Cross-cutting semantics of the Deltakit Cloud API, read from Riverlane's own open-source client
+  library and docs guide. No OpenAPI is published, so nothing here is derived from a spec.
+authentication:
+  style: bearer-token
+  header: 'Authorization: Bearer <token>'
+  see: authentication/riverlane-authentication.yml
+versioning:
+  scheme: uri-path + client switch
+  current: 2
+  detail: >-
+    Two API versions coexist behind one base URL and one token. v1 is GraphQL at /api/graphql with
+    parametric query documents fetched from /api/data/query/<name>. v2 is a REST task API under
+    /api/v2/. The SDK selects with Client(base_url, api_version=1|2); v2 is the default and is
+    described in the client as the lighter-weight transport.
+  base_url: https://deltakit.riverlane.com/proxy
+  base_url_override: DELTAKIT_SERVER environment variable
+  see: lifecycle/riverlane-lifecycle.yml
+execution_model:
+  style: asynchronous-job
+  detail: >-
+    v2 work is submitted as a task and polled. There is no synchronous compute endpoint.
+  submit: POST /api/v2/tasks/add/{task_type}
+  poll: GET /api/v2/tasks/get/?request_id={request_id}
+  cancel: 'DELETE /api/v2/tasks/kill/ (v1 equivalent: /api/data/kill/{request_id})'
+  job_fields: [request_id, type, status, result]
+  job_statuses: [see errors/riverlane-error-codes.yml]
+  task_types:
+  - generate_circuit
+  - generate_noisy_stim_circuit
+  - generate_si1000_noisy_stim_circuit
+  - decode
+  - decode_leakage
+  - defect_rates
+  - correlation_matrix
+  - trim_circuit_and_detectors
+  - simulation
+request_tracing:
+  supported: true
+  header: X-Request-ID
+  detail: >-
+    The client generates a request id per call and sends it as X-Request-ID on every v2 request,
+    and as a ?request_id= query parameter when fetching v1 GraphQL query documents. The same id is
+    echoed in client-side logging and is the handle used to poll and to cancel a job.
+idempotency:
+  supported: false
+  detail: >-
+    Riverlane documents no idempotency key, no Idempotency-Key header, and no replay contract.
+    Retries are safe only for the read/poll endpoints. No Idempotency pointer is wired in apis.yml
+    for this reason.
+retries:
+  client_policy: true
+  total: 3
+  backoff_factor: 0.5
+  status_forcelist: [500, 502, 503, 504]
+  detail: >-
+    The published client mounts a urllib3 Retry on both http:// and https:// adapters. 4xx are not
+    retried. This is client-side behaviour, not a documented server contract.
+pagination:
+  supported: false
+  detail: Compute API — no collection endpoints, so no pagination surface.
+rate_limits:
+  documented: false
+  detail: >-
+    No rate-limit headers, quotas or 429 handling appear in the docs or the client. Concurrency is
+    instead expressed per job (Decoder.parallel_jobs) and the cancel response reports the number of
+    workers stopped.
+error_envelope:
+  format: custom-json
+  shape: '{"message": "<human message>", "error_code": <int>}'
+  alternate_shape: '{"detail": "<message>"}  # forwarded from the application behind the gateway'
+  problem_json: false
+  detail: >-
+    Not RFC 9457. The gateway answers with `message` + `error_code`; the application behind it may
+    answer with `detail`. The client reads `detail`, falls back to `message`, and raises
+    ServerException formatted as "Status <http> (Error #<error_code>): <message>".
+  see: errors/riverlane-error-codes.yml
+data_encoding:
+  formats: ['01', b8, csv, text]
+  detail: >-
+    Measurement, detection-event and observable-flip payloads are carried as typed data strings in
+    one of four formats (DataFormat enum). Large payloads are exchanged as file references rather
+    than inline JSON.
+transport_security:
+  tls_required: true
+  verification_toggle: DELTAKIT_DISABLE_TLS_CHECK (debug only)
+webhooks:
+  supported: false
+  detail: No callback, webhook or streaming surface is published; completion is discovered by polling.

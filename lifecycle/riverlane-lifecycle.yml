@@ -1,0 +1,60 @@
+generated: '2026-08-05'
+method: searched
+source: https://github.com/Deltakit/deltakit/blob/main/CHANGELOG.md
+notes: >-
+  Riverlane's lifecycle commitments are made on the SDK, not on the HTTP API. The SDK states its
+  policy explicitly (SemVer 2.0.0 + SPEC 0 for Python/dependency support windows) and ships a dated
+  changelog and tagged releases. The cloud API itself carries no published versioning policy,
+  deprecation policy, Sunset/Deprecation header support, SLA or status page — those are recorded
+  below as absent, and no StatusPage or Deprecation pointer is wired in apis.yml.
+versioning:
+  sdk:
+    scheme: semver
+    spec: https://semver.org/spec/v2.0.0.html
+    current: 0.9.0
+    released: '2026-07-09'
+    pre_1_0: true
+    note: >-
+      Development status is declared "3 - Alpha" on PyPI and the package is pre-1.0, so breaking
+      changes are permitted between minor versions.
+    support_policy: SPEC 0
+    support_policy_url: https://scientific-python.org/specs/spec-0000/
+    python_supported: '>=3.10,<3.15'
+  api:
+    scheme: uri-path + client switch
+    versions:
+    - {version: 1, transport: graphql, path: /api/graphql, status: available}
+    - {version: 2, transport: rest, path: /api/v2/, status: available, default: true}
+    policy_published: false
+    note: >-
+      v1 and v2 coexist at the same base URL with the same token. Riverlane has published no
+      statement about how long v1 will remain available.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No RFC 8594 Sunset/Deprecation header support is documented and no deprecation policy page
+    exists. The riverlane/QHAL repository is publicly marked DEPRECATED, but that is a retired
+    research project, not an API deprecation policy.
+sla:
+  url: null
+  published: false
+  uptime_target: null
+  note: >-
+    No SLA or uptime commitment is published for the Deltakit Cloud API. The docs do warn that a
+    "no healthy upstream" condition can occur intermittently.
+status_page: null
+status_page_probes:
+- {url: 'https://status.riverlane.com/', status: 'no DNS resolution'}
+- {url: 'https://status.deltakit.riverlane.com/', status: 'no DNS resolution'}
+release_channels:
+  changelog: https://github.com/Deltakit/deltakit/blob/main/CHANGELOG.md
+  releases: https://github.com/Deltakit/deltakit/releases
+  cadence_observed: 9 tagged releases between 2025-09-16 (v0.5.0) and 2026-07-09 (v0.9.0)
+  see: changelog/riverlane-changelog.yml
+deprecated_operations: []
+deprecated_operations_note: >-
+  Cannot be derived — Riverlane publishes no OpenAPI, so there are no operations carrying
+  deprecated: true.
