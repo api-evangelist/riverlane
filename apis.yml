@@ -69,6 +69,9 @@ apis:
   - type: DataModel
     url: data-model/riverlane-data-model.yml
 common:
+- type: License
+  name: Apache-2.0
+  url: https://github.com/Deltakit/deltakit/blob/main/LICENSE
 - type: Website
   url: https://www.riverlane.com/
 - type: DeveloperPortal
