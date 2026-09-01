@@ -35,16 +35,16 @@ specificationVersion: '0.23'
 created: '2026-08-05'
 modified: '2026-08-05'
 tags:
-- quantum-computing
-- quantum-error-correction
+- Quantum Computing
+- Quantum Error Correction
 - Decoders
-- scientific-computing
-- python-sdk
-- graphql
-- simulation
-- research-tools
+- Scientific Computing
+- Python SDK
+- GraphQL
+- Simulation
+- Research Tools
 - Open-Source
-- hpc
+- HPC
 tags_raw:
 - quantum-computing
 - quantum-error-correction
@@ -70,11 +70,11 @@ apis:
   humanURL: https://deltakit.readthedocs.io/
   baseURL: https://deltakit.riverlane.com/proxy
   tags:
-  - quantum-computing
-  - quantum-error-correction
+  - Quantum Computing
+  - Quantum Error Correction
   - Decoders
-  - graphql
-  - simulation
+  - GraphQL
+  - Simulation
   tags_raw:
   - quantum-computing
   - quantum-error-correction
