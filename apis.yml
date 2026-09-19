@@ -50,7 +50,7 @@ modified: '2026-08-05'
 tags:
 - Quantum Computing
 - Quantum Error Correction
-- Decoders
+- Decoder
 - Scientific Computing
 - Python SDK
 - GraphQL
@@ -85,7 +85,7 @@ apis:
   tags:
   - Quantum Computing
   - Quantum Error Correction
-  - Decoders
+  - Decoder
   - GraphQL
   - Simulation
   tags_raw:
