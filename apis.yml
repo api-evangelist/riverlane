@@ -56,7 +56,7 @@ tags:
 - GraphQL
 - Simulation
 - Research Tools
-- Open-Source
+- Open Source
 - HPC
 tags_raw:
 - quantum-computing
@@ -69,6 +69,7 @@ tags_raw:
 - research-tools
 - open-source
 - hpc
+- Open-Source
 apis:
 - name: Deltakit Cloud API
   description: >-
